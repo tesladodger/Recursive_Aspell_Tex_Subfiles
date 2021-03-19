@@ -15,14 +15,14 @@ find_and_check () {
     readarray -t subfiles < <(grep -F "\subfile{" "$1" | cut -d \{ -f 2)
 
     for file in "${subfiles[@]}"; do
-        # remove trailing "}" and add sub-directory
+        # find next sub-directory
+        subdir="${file%%/*}/"
+
+        # remove trailing "}" and add previous sub-directory
         file=$2${file::-1}
 
-        # find next sub-directory
-        subdir="$2${file%/*}/"
-
         # recurse into subfile
-        find_and_check $file $subdir
+        find_and_check $file "$2$subdir"
     done
 
     echo "$1"
